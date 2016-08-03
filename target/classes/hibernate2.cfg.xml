@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!--指定连接数据库用的驱动 -->
+		<property name="connection.driver_class">
+			oracle.jdbc.driver.OracleDriver
+		</property>
+		<!--指定连接数据库的路径 -->
+		<property name="connection.url">
+			jdbc:oracle:thin:@localhost:1521:orcl2
+		</property>
+		<!--指定连接数据库的用户名 -->
+		<property name="connection.username">sys as sysdba</property>
+		<property name="connection.password">123123</property><!--指定连接数据库的密码 -->
+		<!-- 指定连接池里的最大连接数 -->
+		<property name="hibernate.c3p0.maxsize">20</property>
+		<!-- 指定连接池里最小连接数 -->
+		<property name="hibernate.c3p0.minsize">1</property>
+		<!-- 指定连接池里的超时时常 -->
+		<property name="hibernate.c3p0.timeout">5000</property>
+		<!-- 指定连接池里最大缓存多少个Statement对象 -->
+		<property name="hibernate.c3p0.max_statements">100</property>
+		<property name="hibernate.c3p0.idle_test_period">3000</property>
+		<property name="hibernate.c3p0.acquire_increment">2</property>
+		<property name="hibernate.c3p0.validate">true</property>
+		<!-- 指定数据库方言 -->
+		<property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
+		<!-- 根据需要自动创建数据库表 -->
+		<property name="hbm2ddl.auto">update</property><!--1 -->
+		<!--当show_sql属性为true时表示在程序运行时在控制台输出SQL语句，默认为false，建议在调试程序时设为true，发布程序之前再改为false,因为输出SQL语句会影响程序的运行速度 -->
+		<property name="show_sql">true</property>
+
+		<!-- 罗列所有映射文件 -->
+		<mapping resource="com/bean/User.hbm.xml" />
+	</session-factory>
+</hibernate-configuration>
