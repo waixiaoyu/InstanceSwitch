@@ -9,22 +9,32 @@
 		</property>
 		<!--指定连接数据库的路径 -->
 		<property name="connection.url">
-			jdbc:oracle:thin:@localhost:1521:orcl2
+			jdbc:oracle:thin:@localhost:1521:orcl3
 		</property>
 		<!--指定连接数据库的用户名 -->
 		<property name="connection.username">sys as sysdba</property>
 		<property name="connection.password">123123</property><!--指定连接数据库的密码 -->
+
+
+		<!-- C3P0 连接池的配置 -->
+		<property name="connection.provider_class">
+			org.hibernate.connection.C3P0ConnectionProvider
+		</property>
+
+
 		<!-- 指定连接池里的最大连接数 -->
 		<property name="hibernate.c3p0.maxsize">20</property>
 		<!-- 指定连接池里最小连接数 -->
 		<property name="hibernate.c3p0.minsize">1</property>
 		<!-- 指定连接池里的超时时常 -->
-		<property name="hibernate.c3p0.timeout">5000</property>
+		<property name="hibernate.c3p0.timeout">1000</property>
 		<!-- 指定连接池里最大缓存多少个Statement对象 -->
 		<property name="hibernate.c3p0.max_statements">100</property>
 		<property name="hibernate.c3p0.idle_test_period">3000</property>
 		<property name="hibernate.c3p0.acquire_increment">2</property>
 		<property name="hibernate.c3p0.validate">true</property>
+		<!--定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次 -->
+		<property name="hibernate.c3p0.acquireRetryAttempts">3</property>
 		<!-- 指定数据库方言 -->
 		<property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
 		<!-- 根据需要自动创建数据库表 -->

@@ -2,27 +2,33 @@ package com.main;
 
 import java.sql.Date;
 
-import org.hibernate.Session;
-
 import com.bean.User;
-import com.util.HibernateUtils;
+import com.dao.DAO;
+import com.dao.DAOImpl;
 
 public class MainUser {
-	public static void main(String[] args) {
-		for (int i = 0; i < 10; i++) {
-			Session session = HibernateUtils.getSession();
-			session.beginTransaction();
+	public static void main(String[] args) throws InterruptedException {
+		MainUser mu = new MainUser();
+		//mu.save();
+		mu.find();
+	}
+
+	public void save() throws InterruptedException {
+		for (int i = 0; i < 100; i++) {
+			Thread.sleep(1000);
 			User user = new User();
-			user.setUsername("aaa" + i);
-			user.setPassword("aaa");
+			user.setId(i);
+			user.setUsername("" + i);
+			user.setPassword("bbbb");
 			user.setBorn(new Date(System.currentTimeMillis()));
-			try {
-				session.saveOrUpdate(user);
-				session.getTransaction().commit();
-			} catch (Exception e) {
-				System.err.println("Ìá½»Ê§°Ü");
-				HibernateUtils.switchInstance();
-			}
+			DAO<Object> dao = new DAOImpl();
+			dao.save(user);
 		}
+	}
+
+	public void find() {
+		DAO<?> dao = new DAOImpl();
+		String[] values = { "1", "bbbb" };
+		dao.getByHQL("from USER_TABLE where USERNAME=? and PASSWORD=?", (Object) values);
 	}
 }
