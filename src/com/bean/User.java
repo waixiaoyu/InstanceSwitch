@@ -8,7 +8,6 @@ public class User {
 	private String password;
 	private Date born;
 
-
 	public Integer getId() {
 		return id;
 	}
@@ -39,6 +38,11 @@ public class User {
 
 	public void setBorn(Date born) {
 		this.born = born;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", born=" + born + "]";
 	}
 
 }

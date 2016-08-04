@@ -27,7 +27,6 @@ public class HibernateUtils {
 			init();
 			System.out.println("\n 所有实例连接成功! \n");
 		} catch (Exception e) {
-			System.out.println(e.getMessage().equals("Unable to obtain JDBC Connection"));
 			e.printStackTrace();
 		}
 	}
