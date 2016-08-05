@@ -18,8 +18,8 @@ public class MainUser {
 		// System.out.println(query.getSingleResult());
 
 		MainUser mu = new MainUser();
-		// mu.save();
-		mu.find();
+		 mu.save();
+		//mu.find();
 	}
 
 	public void save() throws InterruptedException {

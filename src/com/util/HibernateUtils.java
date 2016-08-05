@@ -9,21 +9,33 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+/**
+ * 该类用于主备数据源的切换，或指定数据源
+ * 
+ * @author Administrator
+ *
+ */
 public class HibernateUtils {
 	private static final String CFG_SURFIX = "cfg.xml";
-	private static final String DIR = "./src";
+
+	private static String DIR = "";
 
 	private static List<SessionFactory> lFactories;
 	private static List<Configuration> lConfigurations;
 	private static String[] strCfgFiles;
 
+	private volatile static boolean bStop = false;
+	private volatile static Thread thread = null;// 创建进程对象，防止单实例多线程多次新建重连线程
 	// 最大重连次数
-	private static final int MAX_TRYING_TIMES = 30;
+	private static final int MAX_ATTEMPTS_TIMES = 30;
+	// 重连时间间隔
+	private static final long ATTEMPTS_INTERVAL = 1000;
 
 	private static int nDefaultConfigurationId = 1;// 默认的配置id
 	static {
 		// 初始化的时候读取所有的配置
 		try {
+			DIR = HibernateUtils.class.getResource("/").getPath();// 读取当前classes目录，xml文件直接会被拷贝到该目录下
 			init();
 			System.out.println("\n 所有实例连接成功! \n");
 		} catch (Exception e) {
@@ -153,14 +165,33 @@ public class HibernateUtils {
 	/**
 	 * 出现问题的时候，切换下一个实例，直接修改指定的配置id
 	 */
-	public static void switchInstance() {
-		// 启动一个线程来尝试重连
-		new Thread(new Reconnect(nDefaultConfigurationId)).start();
-		++nDefaultConfigurationId;
-		int nSize = lFactories.size();
-		if (nDefaultConfigurationId >= nSize) {
-			nDefaultConfigurationId = (nDefaultConfigurationId - nSize) % nSize;
+	public static synchronized void switchInstance() {
+		if (thread == null) {
+			// 启动一个线程来尝试重连
+			thread = new Thread(new Reconnect(nDefaultConfigurationId));
+			thread.start();
+			++nDefaultConfigurationId;
+			int nSize = lFactories.size();
+			if (nDefaultConfigurationId >= nSize) {
+				nDefaultConfigurationId = (nDefaultConfigurationId - nSize) % nSize;
+			}
+		} else {
+			System.out.println("已经启动重连线程，使用有效的默认线程！");
 		}
+	}
+
+	/**
+	 * 提供终止重连线程的方法
+	 */
+	public static void stopAttemptingReconnect() {
+		if (thread != null) {
+			bStop = true;
+			thread.interrupt();
+			thread = null;
+		} else {
+			System.out.println("thread is null");
+		}
+
 	}
 
 	/**
@@ -179,13 +210,12 @@ public class HibernateUtils {
 		@Override
 		public void run() {
 			int nTringTimes = 0;
-			while (MAX_TRYING_TIMES > nTringTimes) {
+			while (MAX_ATTEMPTS_TIMES > nTringTimes && !bStop) {
 				++nTringTimes;
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(ATTEMPTS_INTERVAL);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("线程中断...");
 				}
 				try {
 					modifyConfigurationsAndFactories(nOldConfigurationId);
