@@ -3,12 +3,9 @@ package com.main;
 import java.sql.Date;
 import java.util.List;
 
-import org.hibernate.query.Query;
-
 import com.bean.User;
 import com.dao.DAO;
 import com.dao.DAOImpl;
-import com.util.HibernateUtils;
 
 public class MainUser {
 	public static void main(String[] args) throws InterruptedException {

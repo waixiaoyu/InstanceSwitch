@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,6 +22,7 @@ public class HibernateUtils {
 
 	private static String DIR = "";
 
+	// 针对每个不同的数据库，最好使用不同的SessionFactory。而对于同一数据库的同一进程，最好使用同一session
 	private static List<SessionFactory> lFactories;
 	private static List<Configuration> lConfigurations;
 	private static String[] strCfgFiles;
@@ -31,7 +34,9 @@ public class HibernateUtils {
 	// 重连时间间隔
 	private static final long ATTEMPTS_INTERVAL = 1000;
 
-	private static int nDefaultConfigurationId = 1;// 默认的配置id
+	private Lock lock = new ReentrantLock(false);
+
+	private static int nDefaultConfigurationId = 0;// 默认的配置id
 	static {
 		// 初始化的时候读取所有的配置
 		try {
@@ -80,12 +85,11 @@ public class HibernateUtils {
 	 * @param nId
 	 */
 	private static void modifyConfigurationsAndFactories(int nId) {
+
 		Configuration cfg = new Configuration().configure(strCfgFiles[nId]);
-		lConfigurations.remove(nId);
-		lConfigurations.add(nId, cfg);
+		lConfigurations.set(nId, cfg);
 		SessionFactory factory = cfg.buildSessionFactory();
-		lFactories.remove(nId);
-		lFactories.add(nId, factory);
+		lFactories.set(nId, factory);
 		System.out.println(cfg.getProperty("connection.url") + " 重连接成功!");
 	}
 

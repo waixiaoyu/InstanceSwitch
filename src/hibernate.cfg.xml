@@ -9,22 +9,19 @@
 		</property>
 		<!--指定连接数据库的路径 -->
 		<property name="connection.url">
-			jdbc:oracle:thin:@localhost:1521:orcl2
+			jdbc:oracle:thin:@192.168.3.52:1521:test3
 		</property>
 		<!--指定连接数据库的用户名 -->
 		<property name="connection.username">sys as sysdba</property>
 		<property name="connection.password">123123</property><!--指定连接数据库的密码 -->
 
 		<!-- C3P0 连接池的配置 -->
-		<property name="connection.provider_class">
-			org.hibernate.connection.C3P0ConnectionProvider
-		</property>
-
+		<property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 
 		<!-- 指定连接池里的最大连接数 -->
-		<property name="hibernate.c3p0.maxsize">20</property>
+		<property name="hibernate.c3p0.max_size">200</property>
 		<!-- 指定连接池里最小连接数 -->
-		<property name="hibernate.c3p0.minsize">1</property>
+		<property name="hibernate.c3p0.min_size">50</property>
 		<!-- 指定连接池里的超时时常 -->
 		<property name="hibernate.c3p0.timeout">1000</property>
 		<!-- 指定连接池里最大缓存多少个Statement对象 -->
